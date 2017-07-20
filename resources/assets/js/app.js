@@ -7,16 +7,62 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-Vue.component('example', require('./components/Example.vue'));
+import env from './env';
+const NProgrss = require('nprogress');
+const Vue = require('vue');
+const algoliasearch = require('algoliasearch');
+const client = algoliasearch(env.ALGOLIA_ID, env.ALGOLIA_SEARCH_ONLY_KEY);
+const index = client.initIndex('intents');
 
 const app = new Vue({
-    el: '#app'
+
+    el: '#app',
+
+    data: {
+
+        timeout: null,
+        results: null
+
+    },
+
+    methods: {
+
+        type(event) {
+
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(function () {
+
+                NProgrss.start();
+                this.search(event.target.value);
+
+            }.bind(this), 500);
+
+        },
+
+        search(query) {
+
+            NProgrss.done();
+
+            if (query.length == 0) {
+
+                this.results = null;
+                return;
+
+            }
+
+            index.search(query, function searchDone(err, content) {
+
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+
+                this.results = content.hits;
+
+            }.bind(this));
+
+        }
+
+    }
+
 });

@@ -1,95 +1,47 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="{{ config('app.locale') }}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name') }}</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+<body>
 
-        <title>Laravel</title>
+<div class="container">
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+    <div class="content" id="app">
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
+        <div class="header">
 
-            .full-height {
-                height: 100vh;
-            }
+            <h1 class="title">{{ config('app.name') }}</h1>
 
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
+            <p class="subtitle">@lang('strings.the_intentions_of_the_world')</p>
 
-            .position-ref {
-                position: relative;
-            }
+            <input id="input-search" type="text" placeholder="@lang('strings.index_search_placeholder')" @keyup="type">
 
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
+        </div>
 
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @if (Auth::check())
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+        <template v-for="result in results">
+            <div class="results">
+                <div class="result">
+                    <a :href="result.user.profile"><img :src="result.user.picture" class="profile"></a>
+                    <p><a :href="result.user.profile">@{{ result.user.name }}</a> @lang('strings.wants_to') <strong>@{{ result.intent.title }}</strong></p>
+                    <img :src="result.intent.image" class="image">
+                    <p>@{{ result.intent.description }}</p>
+                    <button type="button" class="button-help">@lang('strings.i_intend_to_help')</button>
                 </div>
             </div>
-        </div>
-    </body>
+        </template>
+
+        <p v-if="results != null && results.length == 0" id="no-results">@lang('strings.no_results_found')</p>
+
+    </div>
+
+</div>
+
+<script src="{{ asset('js/app.js') }}"></script>
+
+</body>
 </html>
